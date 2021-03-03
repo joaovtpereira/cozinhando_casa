@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import '../../models/receita.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return new HomeState();
+  }
+}
+
+class HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return _buildHome(); //_ faz ficar privado
@@ -8,12 +17,32 @@ class Home extends StatelessWidget {
 
   Widget _buildHome() {
     return Scaffold(
-      body: _buildCard(),
+      body: _buildListCard(),
       appBar: _buildAppBar(),
     );
   }
 
-  Widget _buildCard() {
+  Widget _buildListCard() {
+    return FutureBuilder(
+      future: DefaultAssetBundle
+        .of(context)
+        .loadString('assets/receitas.json'),
+      builder: (context, snapshot) {
+        List<dynamic> receitas = json.decode(snapshot.data.toString());
+        
+        return ListView.builder(
+            itemBuilder: (BuildContext context, int index) {
+              Receita receita = Receita.fromJson(receitas[index]);
+
+              return _buildCard(receita.titulo, receita.foto);
+            },
+            itemCount: receitas == null ? 0 : receitas.length ,
+        );
+      },
+    );
+  }
+
+  Widget _buildCard(titulo, foto) {
     return SizedBox(
       height: 300,
       child: Card(
@@ -22,8 +51,9 @@ class Home extends StatelessWidget {
             children: <Widget>[
               Stack(
                 children: <Widget>[
-                  _buildImageCard(),
-                  _buildTextCard(),
+                  _buildImageCard(foto),
+                  _buildGradienteCard(),
+                  _buildTextCard(titulo),
                 ],
               )
             ],
@@ -32,12 +62,12 @@ class Home extends StatelessWidget {
     );
   }
 
-  Widget _buildTextCard() {
+  Widget _buildTextCard(titulo) {
     return Positioned(
       bottom: 10,
       left: 10,
       child: Text(
-        'Blend maravilhoso',
+        titulo,
         style: TextStyle(
           fontSize: 20,
           color: Colors.white,
@@ -47,9 +77,25 @@ class Home extends StatelessWidget {
     );
   }
 
-  Widget _buildImageCard() {
-    return Image.network(
-      'https://respostas.sebrae.com.br/wp-content/uploads/2020/06/como_fazer_hamburguer_caseiro-806x440.jpg',
+  Widget _buildGradienteCard() {
+    return Container(
+      height: 268,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: FractionalOffset.topCenter, //gradiente vai começar no topo do nosso elemento
+          end: FractionalOffset.bottomCenter, //gradiente vai terminar no fundo do nosso elemento
+          colors: [
+            Colors.transparent,
+            Colors.deepOrange.withOpacity(0.7)
+          ],
+        )
+      ),
+    );
+  }
+
+  Widget _buildImageCard(foto) {
+    return Image.asset(
+      foto,
       fit: BoxFit.fill,
       height: 268,
     );
