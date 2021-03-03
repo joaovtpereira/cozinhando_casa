@@ -46,7 +46,7 @@ class HomeState extends State<Home> {
     return SizedBox(
       height: 300,
       child: Card(
-          margin: EdgeInsets.all(16), // Coloca uma borda de 8 pixels em todos os cantos do card
+          margin: EdgeInsets.all(16), // Coloca uma borda de 16 pixels em todos os cantos do card
           child: Column(
             children: <Widget>[
               Stack(
