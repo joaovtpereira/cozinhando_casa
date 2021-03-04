@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import '../../models/receita.dart';
+import '../details/details.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -34,7 +35,7 @@ class HomeState extends State<Home> {
             itemBuilder: (BuildContext context, int index) {
               Receita receita = Receita.fromJson(receitas[index]);
 
-              return _buildCard(receita.titulo, receita.foto);
+              return _buildCard(receita);
             },
             itemCount: receitas == null ? 0 : receitas.length ,
         );
@@ -42,22 +43,29 @@ class HomeState extends State<Home> {
     );
   }
 
-  Widget _buildCard(titulo, foto) {
-    return SizedBox(
-      height: 300,
-      child: Card(
-          margin: EdgeInsets.all(16), // Coloca uma borda de 16 pixels em todos os cantos do card
-          child: Column(
-            children: <Widget>[
-              Stack(
-                children: <Widget>[
-                  _buildImageCard(foto),
-                  _buildGradienteCard(),
-                  _buildTextCard(titulo),
-                ],
-              )
-            ],
-          )
+  Widget _buildCard(receita) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => Details(receita: receita),
+        ));
+      },
+      child: SizedBox(
+        height: 300,
+        child: Card(
+            margin: EdgeInsets.all(16), // Coloca uma borda de 16 pixels em todos os cantos do card
+            child: Column(
+              children: <Widget>[
+                Stack(
+                  children: <Widget>[
+                    _buildImageCard(receita.foto),
+                    _buildGradienteCard(),
+                    _buildTextCard(receita.titulo),
+                  ],
+                )
+              ],
+            )
+        ),
       ),
     );
   }
